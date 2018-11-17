@@ -1,0 +1,338 @@
+<section class="content-header ">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="row">
+				<div class="col-md-8">
+					<h1 class="panel-title">Gestion Productos</h1>
+				</div>
+				<div class="col-md-4 text-right">
+					<button type="button" class="btn btn-success btn-sm" id="btn-add">Nuevo</button>
+					<button type="button" class="btn btn-primary btn-sm"
+						onclick="VerProductos()">Ver Productos</button>
+				</div>
+			</div>
+		</div>
+		<!-- 						<p class="breadcrumb"></p> -->
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-xs-6 col-sm-4">
+					<input type="text" id="buscador" class="form-control"
+						placeholder="Buscar">
+				</div>
+				<div class="col-xs-6 col-sm-4">
+					<div>
+						<select class="form-control form-control-sm">
+							<option>Marca</option>
+							<option>Canon</option>
+						</select>
+					</div>
+					<div>
+						<select class="form-control form-control-sm">
+							<option>Categoria</option> #foreach($i in $categoria)
+							<option value="$i.idcategoria">$i.nombre</option> #end
+						</select>
+					</div>
+				</div>
+				<div class="col-xs-6 col-sm-4">
+					<label class="radio-inline"> <input type="radio" value="1"
+						name="festado"> Activos
+					</label> <label class="radio-inline"> <input type="radio" value="0"
+						name="festado"> Bajas
+					</label> <label class="radio-inline"> <input type="radio"
+						value="-1" checked="checked" name="festado"> Todos
+					</label>
+				</div>
+			</div>
+			<br>
+
+			<div class="row" id="rowTable">
+				<!-- CAMBIAR TODA LA FILA PARA ACTUALIZAR LA TABLA -->
+			</div>
+			<!--./table -->
+		</div>
+	</div>
+</section>
+
+<!-- MODAL ELIMINAR-->
+
+<div class="modal fade" id="delModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="box-header with-border">
+					<h3 class="box-title">Eliminar Producto</h3>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- /.box-header -->
+				<!-- form start -->
+				<form class="form-horizontal">
+					<div class="box-body">
+						<p class="col-sm-12  text-center">
+							Esta seguro de eliminar el producto <strong id="sNombre"></strong>
+						</p>
+						<input type="hidden" id="inputId">
+					</div>
+					<!-- /.box-body -->
+					<div class="box-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+						<button type="button" class="btn btn-info pull-right"
+							onclick="Eliminar()">Aceptar</button>
+					</div>
+					<!-- /.box-footer -->
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- MODAL HABILITAR -->
+<div class="modal fade" id="habModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="box-header with-border">
+					<h3 class="box-title">Habilitar Producto</h3>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- /.box-header -->
+				<!-- form start -->
+				<form class="form-horizontal">
+					<div class="box-body">
+						<p class="col-sm-12  text-center">
+							Esta seguro de habilitar el producto<strong id="hNombre"></strong>
+						</p>
+						<input type="hidden" id="inputId">
+					</div>
+					<!-- /.box-body -->
+					<div class="box-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+						<button type="button" class="btn btn-info pull-right"
+							onclick="Habilitar()">Aceptar</button>
+					</div>
+					<!-- /.box-footer -->
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- CONTENEDOR PARA MODALES -->
+<div id="contenedor"></div>
+<script>
+	$('#example2').DataTable({
+		'paging' : true,
+		'lengthChange' : false,
+		'searching' : false,
+		'ordering' : true,
+		'info' : true,
+		'autoWidth' : false
+	})
+
+	//filtro
+	var buscador = $('#buscador').val();
+	var estado = $('input[name="festado"]:checked').val()
+
+	$('#buscador').on('keyup', function() {
+		buscador = $(this).val();
+		UpdateView();
+	})
+
+	$('input[name="festado"]').on('change', function() {
+		estado = $(this).val()
+		UpdateView();
+	})
+
+	UpdateView();
+
+	function UpdateView() {
+		var datos = "buscador=" + buscador + "&estado=" + estado;
+		console.log(datos);
+		$("#rowTable").load("producto/tablePro.html?" + datos, function(e) {
+			console.log("Ya se cargo")
+		});
+	}
+
+	function GetFormAdd() {
+		$("#contenedor").load("producto/getForm.html", function(e) {
+			$('#addModal').modal('show');
+		})
+	}
+
+	$('#form-persona').ajaxSubmit({
+		success : function(resp) {
+			console.log("respuesta: ", resp);
+		}
+	})
+
+	/*$('#addForm').submit(function(e) {
+		var datos = new FormData(this);
+		datos.append("dato", "valor");
+		console.log(datos);
+		$.ajax({
+			//url : 'Agregar_Servicio.html',
+			type : 'post',
+			dataType : "html",
+			data : datos,
+			cache : false,
+			contentType : false,
+			processData : false,
+			success : function(resul) {
+				$('#addModal').modal('hide');
+				//UpdateView();
+			}
+
+		})
+	})*/
+
+	/*function GetFormAdd() {
+		$("#contenedor").load("producto/getForm.html", function(e) {
+			console.log("Ya se cargo")
+			$('#addModal').modal('show')
+			
+			$('#addForm').submit(function(e) {
+				var datos = new FormData(this);
+				datos.append("dato", "valor");
+				console.log(datos);
+				$.ajax({
+					// 					url : 'Agregar_Servicio.html',
+					type : 'post',
+					dataType : "html",
+					data : datos,
+					cache : false,
+					contentType : false,
+					processData : false,
+					success : function(resul) {
+						$('#addModal').modal('hide');
+						// 				$('#modal-agregaMateria').remove();
+						// 						ejecutar();
+					}
+
+				})
+				// 				})
+			})
+		})
+
+		});
+	}*/
+
+	$('#btn-add').on('click', function() {
+		$.post('producto/getForm.html', function(resp) {
+			console.log('vista', resp)
+			$('#contenedor').html(resp)
+			$('#addModal').modal('show')
+
+			$('#addForm').submit(function(e) {
+				var datos = new FormData(this);
+				datos.append("dato", "valor");
+				console.log(datos);
+				$.ajax({
+					// 					url : 'Agregar_Servicio.html',
+					//url : 'producto/Agregar_Servicio.html',
+					type : 'post',
+					dataType : "html",
+					data : datos,
+					cache : false,
+					contentType : false,
+					processData : false,
+					success : function(resul) {
+						$('#addModal').modal('hide');
+
+						UpdateView();
+					}
+
+				})
+				// 				})
+			})
+		})
+	});
+	function Save() {
+		console.log($('#addForm').serialize())
+		$.ajax({
+			url : 'categoria/save.html',
+			type : 'post',
+			data : $('#addForm').serialize(),
+			dataType : 'json',
+			success : function(res) {
+				console.log("res: ", res);
+				$('#addModal').modal('hide');
+				UpdateView();
+				$("#addForm")[0].reset();
+			},
+			error : function(jqXHR, estado, error) {
+				console.log(estado, error, jqXHR);
+				console.log("Upps ocurrio algo!!!");
+			}
+		});
+	}
+
+	$('#addForm').submit(function(e) {
+		console.log(e)
+		var data = new FormData('#addForm'); //Creamos los datos a enviar con el formulario
+		console.log(data)
+		$.ajax({
+			url : 'producto/save.html', //URL destino
+			data : data,
+			processData : false, //Evitamos que JQuery procese los datos, daría error
+			contentType : false, //No especificamos ningún tipo de dato
+			type : 'POST',
+			success : function(resultado) {
+				consulta(dato)
+				$('#addModal').modal('hide');
+				UpdateView();
+				$("#addForm")[0].reset();
+			}
+		});
+		e.preventDefault(); //Evitamos que se mande del formulario de forma convencional
+	});
+
+	function Obtener(id, nombre) {
+		$('#inputId').val(id);
+		$('#sNombre').text(nombre);
+		$('#hNombre').text(nombre);
+	}
+
+	function Eliminar() {
+		var id = $('#inputId').val();
+		console.log("Eliminar " + id);
+		$.post("producto/delete.html", {
+			id : id
+		}, function(res) {
+			console.log(res);
+			$('#delModal').modal('hide');
+			UpdateView();
+		});
+	}
+
+	function Habilitar() {
+		var id = $('#inputId').val();
+		$.post("producto/habilitar.html", {
+			id : id
+		}, function(data) {
+			$('#habModal').modal('hide');
+			UpdateView();
+		});
+	}
+
+	function GetModificar(id) {
+		console.log("modificar " + id);
+		$('#contenedor').load("producto/getModificar.html?id=" + id,
+				function(e) {
+					$('#modModal').modal('show');
+				});
+	}
+
+	function Ver(id) {
+		console.log(id);
+		$('#contenedor').load("producto/ver.html?id=" + id, function(e) {
+			$('#verModal').modal('show');
+		});
+	}
+</script>

@@ -1,0 +1,140 @@
+
+<!-- MODALS -->
+<div class="modal fade" id="modModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<!-- 			<div class="modal-header"> -->
+			<!-- 			</div> -->
+			<div class="modal-body">
+				<div class="box-header with-border">
+					<h3 class="box-title">Modificar Empleado</h3>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<!-- /.box-header -->
+				<!-- form start -->
+				<form class="form-horizontal" id="modForm" action="" method="post">
+					<div class="box-body">
+						<div class="form-group">
+							<label for="cedula" class="col-sm-2 control-label">Cedula</label>
+
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="cedula"
+									name="cedula" value="$e.cedula" autofocus="autofocus">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="nombre" class="col-sm-2 control-label">Nombre</label>
+
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="nombre"
+									name="nombre" value="$e.nombre">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="ap" class="col-sm-2 control-label">Ap.
+								Paterno</label>
+
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="ap" name="ap"
+									value="$e.ap">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="am" class="col-sm-2 control-label">Ap.
+								Paterno</label>
+
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="am" name="am"
+									value="$e.am">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="fnac" class="col-sm-2 control-label">Fecha
+								Nac.</label>
+
+							<div class="col-sm-10">
+								<input type="date" class="form-control" id="fnac" name="fnac"
+									value="$e.fnac">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="direccion" class="col-sm-2 control-label">Direccion</label>
+
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="telefono"
+									name="direccion" value="$e.direccion">
+							</div>
+						</div>
+
+
+						<div class="form-group">
+							<label for="email" class="col-sm-2 control-label">Email</label>
+
+							<div class="col-sm-10">
+								<input type="email" class="form-control" id="email" name="email"
+									value="$e.email">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="telefono" class="col-sm-2 control-label">Telefono</label>
+
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="telefono"
+									name="telefono" value="$e.telefono">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="" class="col-sm-2 control-label">Genero</label> <label
+								class="radio-inline"><input type="radio" value="M"
+								name="sexo" #if($e.sexo== 'M' ) checked #end>Masculino
+							</label> <label class="radio-inline"> <input type="radio"
+								value="F" name="sexo" #if($e.sexo== 'F' ) checked #end>
+								Femenino
+							</label> <label class="radio-inline"> <input type="radio"
+								value="O" name="sexo" #if($e.sexo== 'O' ) checked #end>
+								Otro
+							</label>
+						</div>
+						<input type="hidden" name="estado" value="$e.estado"> <input
+							type="hidden" name="idempleado" value="$e.idempleado">
+
+					</div>
+					<div class="box-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+						<button type="button" class="btn btn-info pull-right"
+							onclick="Modificar()">Guardar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	//modificar
+	function Modificar() {
+		console.log($('#modForm').serialize())
+		$.ajax({
+			url : 'empleado/modify.html',
+			type : 'post',
+			data : $('#modForm').serialize(),
+			dataType : 'json',
+			success : function(res) {
+				console.log("res: ", res);
+				$('#modModal').modal('hide');
+				UpdateView();
+			},
+			error : function(jqXHR, estado, error) {
+				console.log(estado, error, jqXHR);
+				console.log("Upps ocurrio algo!!!");
+			}
+		});
+	}
+</script>

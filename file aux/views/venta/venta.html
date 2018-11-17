@@ -1,0 +1,220 @@
+<section class="content-header ">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<div class="row">
+				<div class="col-md-8">
+					<h1 class="panel-title">Gestion Ventas</h1>
+				</div>
+				<div class="col-md-4 text-right">
+					<button type="button" class="btn btn-success btn-sm"
+						onclick="GetFormAdd()">Nuevo</button>
+				</div>
+			</div>
+		</div>
+		<!-- 						<p class="breadcrumb"></p> -->
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-xs-6 col-sm-4">
+					<input type="text" id="buscador" class="form-control"
+						placeholder="Buscar">
+				</div>
+				<div class="col-xs-6 col-sm-4"></div>
+				<div class="col-xs-6 col-sm-4">
+					<label class="radio-inline"> <input type="radio" value="1"
+						name="festado"> Activos
+					</label> <label class="radio-inline"> <input type="radio" value="0"
+						name="festado"> Bajas
+					</label> <label class="radio-inline"> <input type="radio"
+						value="-1" checked="checked" name="festado"> Todos
+					</label>
+				</div>
+			</div>
+			<br>
+
+
+			<div class="row" id="rowTable">
+				<!--CAMBIAR TODA LA FILA PARA ACTUALIZAR LA TABLA -->
+			</div>
+		</div>
+	</div>
+</section>
+
+
+<!-- MODAL ELIMINAR-->
+
+<div class="modal fade" id="delModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="box-header with-border">
+					<h3 class="box-title">Eliminar Cliente</h3>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<!-- /.box-header -->
+				<!-- form start -->
+				<form class="form-horizontal">
+					<div class="box-body">
+						<p class="col-sm-12  text-center">
+							Esta seguro de eliminar el cliente <strong id="sNombre"></strong>
+						</p>
+						<input type="hidden" id="inputId">
+					</div>
+					<!-- /.box-body -->
+					<div class="box-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+						<button type="button" class="btn btn-info pull-right"
+							onclick="Eliminar()">Aceptar</button>
+					</div>
+					<!-- /.box-footer -->
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- MODAL HABILITAR -->
+<div class="modal fade" id="habModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="box-header with-border">
+					<h3 class="box-title">Habilitar Cliente</h3>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<!-- /.box-header -->
+				<!-- form start -->
+				<form class="form-horizontal">
+					<div class="box-body">
+						<p class="col-sm-12  text-center">
+							Esta seguro de habilitar al cliente <strong id="sNombre"></strong>
+						</p>
+						<input type="hidden" id="inputId">
+					</div>
+					<!-- /.box-body -->
+					<div class="box-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+						<button type="button" class="btn btn-info pull-right"
+							onclick="Habilitar()">Aceptar</button>
+					</div>
+					<!-- /.box-footer -->
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- CONTENEDOR PARA MODALES -->
+<div id="contenedor"></div>
+
+<script>
+	$('#example2').DataTable({
+		'paging' : true,
+		'lengthChange' : false,
+		'searching' : false,
+		'ordering' : true,
+		'info' : true,
+		'autoWidth' : false
+	})
+
+	//filtro de proveedor
+	var buscador = $('#buscador').val();
+	var estado = $('input[name="festado"]:checked').val()
+
+	$('#buscador').on('keyup', function() {
+		buscador = $(this).val();
+		UpdateView();
+	})
+
+	$('input[name="festado"]').on('change', function() {
+		estado = $(this).val()
+		UpdateView();
+	})
+
+	UpdateView();
+
+	function UpdateView() {
+		var datos = "buscador=" + buscador + "&estado=" + estado;
+		console.log(datos);
+		$("#rowTable").load("cliente/tableCli.html?" + datos, function(e) {
+			console.log("Ya se cargo")
+		});
+	}
+
+	function GetFormAdd() {
+		$("#rowTable").load("venta/getFormAdd.html", function(e) {
+			console.log("Ya se cargo")
+		});
+	}
+	$('#btn-create').click(function() {
+		console.log($('#addForm').serialize())
+		$.ajax({
+			url : 'cliente/save.html',
+			type : 'post',
+			data : $('#addForm').serialize(),
+			dataType : 'json',
+			success : function(res) {
+				console.log("res: ", res);
+				$('#addModal').modal('hide');
+				UpdateView();
+				$("#addForm")[0].reset();
+			},
+			error : function(jqXHR, estado, error) {
+				console.log(estado, error, jqXHR);
+				console.log("Upps ocurrio algo!!!");
+			}
+		});
+	});
+
+	function Obtener(id, nombre) {
+		$('#inputId').val(id);
+		$('#sNombre').text(nombre);
+		$('#hNombre').text(nombre);
+	}
+
+	function Eliminar() {
+		var id = $('#inputId').val();
+		console.log("Eliminar " + id);
+		$.post("cliente/delete.html", {
+			id : id
+		}, function(res) {
+			console.log(res);
+			$('#delModal').modal('hide');
+			UpdateView();
+		});
+	}
+
+	function Habilitar() {
+		var id = $('#inputId').val();
+		$.post("cliente/habilitar.html", {
+			id : id
+		}, function(data) {
+			$('#habModal').modal('hide');
+			UpdateView();
+		});
+	}
+
+	function GetModificar(id) {
+		console.log("modificar " + id);
+		$('#contenedor').load("cliente/getModificar.html?id=" + id,
+				function(e) {
+					$('#modModal').modal('show');
+				});
+	}
+
+	function Ver(id) {
+		console.log(id);
+		$('#contenedor').load("cliente/ver.html?id=" + id, function(e) {
+			$('#verModal').modal('show');
+		});
+	}
+</script>

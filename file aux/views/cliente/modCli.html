@@ -1,0 +1,106 @@
+<!-- MODALS -->
+<div class="modal fade" id="modModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="box-header with-border">
+					<h3 class="box-title">Modificar Cliente</h3>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<!-- /.box-header -->
+				<!-- form start -->
+				<form class="form-horizontal" id="modForm">
+					<div class="box-body">
+						<div class="form-group">
+							<label for="cedula" class="col-sm-2 control-label">Cedula</label>
+
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="cedula"
+									name="cedula" value="$i.cedula" autofocus="autofocus">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="nombre" class="col-sm-2 control-label">Nombre</label>
+
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="nombre"
+									name="nombre" value="$i.nombre">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="ap" class="col-sm-2 control-label">Ap.
+								Paterno</label>
+
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="ap" name="ap"
+									value="$i.ap">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="am" class="col-sm-2 control-label">Ap.
+								Materno</label>
+
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="am" name="am"
+									value="$i.am">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="email" class="col-sm-2 control-label">Email</label>
+
+							<div class="col-sm-10">
+								<input type="email" class="form-control" id="email" name="email"
+									value="$i.email">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="telefono" class="col-sm-2 control-label">Telefono</label>
+
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="telefono"
+									name="telefono" value="$i.telefono">
+							</div>
+						</div>
+
+						<input type="hidden" name="estado" value="$i.estado"> <input
+							type="hidden" name="idcliente" value="$i.idcliente">
+
+					</div>
+					<div class="box-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+						<button type="button" class="btn btn-info pull-right"
+							id="btn-modify">Guardar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	//modificar
+	$('#btn-modify').click(function() {
+		console.log($('#modForm').serialize())
+		$.ajax({
+			url : 'cliente/modify.html',
+			type : 'post',
+			data : $('#modForm').serialize(),
+			dataType : 'json',
+			success : function(res) {
+				console.log("res: ", res);
+				$('#modModal').modal('hide');
+				UpdateView();
+			},
+			error : function(jqXHR, estado, error) {
+				console.log(estado, error, jqXHR);
+				console.log("Upps ocurrio algo!!!");
+			}
+		});
+	});
+</script>

@@ -1,0 +1,40 @@
+<div class="modal fade" id="verModal" tabindex="-1" role="dialog"
+	aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="box-header with-border">
+					<h3 class="box-title">Ver Rol</h3>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- /.box-header -->
+				<!-- form start -->
+				<form class="form-horizontal">
+					<div class="box-body">
+						<p class="col-sm-12  text-center">
+							Nombre rol: <strong>$rol.nombre</strong>
+						</p>
+						<p>Menus asignados:</p>
+						<ul>
+							#foreach($i in $menus)
+							<li>$i.nombre</li>
+							#end
+						</ul>
+						<p class="col-sm-12">
+							Estado: <strong>$rol.estado</strong>
+						</p>
+					</div>
+					<!-- /.box-body -->
+					<div class="box-footer">
+						<button type="button" class="btn btn-info pull-right"
+							data-dismiss="modal">Aceptar</button>
+					</div>
+					<!-- /.box-footer -->
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
